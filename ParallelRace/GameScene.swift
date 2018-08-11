@@ -9,7 +9,7 @@
 import SpriteKit
 import GameplayKit
 
-class GameScene: SKScene {
+class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var leftCar = SKSpriteNode()
     var rightCar = SKSpriteNode()
@@ -31,12 +31,15 @@ class GameScene: SKScene {
     override func didMove(to view: SKView) {
         self.anchorPoint = CGPoint(x: 0.5, y: 0.5)
         setUp()
+        physicsWorld.contactDelegate = self
         //createRoadStrip()
         print(UIScreen.main.bounds.width)
         print(UIScreen.main.bounds.height)
         Timer.scheduledTimer(timeInterval: TimeInterval(0.1), target: self, selector: #selector(createRoadStrip), userInfo: nil, repeats: true)
         Timer.scheduledTimer(timeInterval: TimeInterval(Helper().randomBetweenTwoNumbers(firstNumber: 0, secondNumber: 1.8)), target: self, selector: #selector(leftTraffic), userInfo: nil, repeats: true)
         Timer.scheduledTimer(timeInterval: TimeInterval(Helper().randomBetweenTwoNumbers(firstNumber: 0, secondNumber: 1.8)), target: self, selector: #selector(rightTraffic), userInfo: nil, repeats: true)
+        
+        Timer.scheduledTimer(timeInterval: TimeInterval(2), target: self, selector: #selector(removeItems), userInfo: nil, repeats: true)
     }
     
     override func update(_ currentTime: TimeInterval) {
@@ -46,6 +49,21 @@ class GameScene: SKScene {
         }
         showRoadStrip()
         
+    }
+    
+    func didBegin(_ contact: SKPhysicsContact) {
+        var firstBody = SKPhysicsBody()
+        var secondBody = SKPhysicsBody()
+        
+        if contact.bodyA.node?.name == "leftCar" || contact.bodyA.node?.name == "rightCar" {
+            firstBody = contact.bodyA
+            secondBody = contact.bodyB
+        } else {
+            firstBody = contact.bodyB
+            secondBody = contact.bodyA
+        }
+        firstBody.node?.removeFromParent()
+        afterCollision()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -78,6 +96,14 @@ class GameScene: SKScene {
         leftCar = self.childNode(withName: "leftCar") as! SKSpriteNode
         rightCar = self.childNode(withName: "rightCar") as! SKSpriteNode
         centerPoint = self.frame.size.width / self.frame.size.height
+        
+        leftCar.physicsBody?.categoryBitMask = ColliderType.CAR_COLLIDER
+        leftCar.physicsBody?.contactTestBitMask = ColliderType.ITEM_COLLIDER
+        leftCar.physicsBody?.collisionBitMask = 0
+        
+        rightCar.physicsBody?.categoryBitMask = ColliderType.CAR_COLLIDER
+        rightCar.physicsBody?.contactTestBitMask = ColliderType.ITEM_COLLIDER_1
+        rightCar.physicsBody?.collisionBitMask = 0
     }
     
     @objc func createRoadStrip() {
@@ -131,7 +157,7 @@ class GameScene: SKScene {
         
     }
     
-    func removeItems() {
+    @objc func removeItems() {
         for child in children {
             // children = all nodes in the scene
             if child.position.y < -self.size.height - 100 {
@@ -199,6 +225,10 @@ class GameScene: SKScene {
             leftTrafficItem.position.x = -280
         }
         leftTrafficItem.position.y = 700
+        leftTrafficItem.physicsBody = SKPhysicsBody(circleOfRadius: leftTrafficItem.size.height / 2)
+        leftTrafficItem.physicsBody?.categoryBitMask = ColliderType.ITEM_COLLIDER
+        leftTrafficItem.physicsBody?.collisionBitMask = 0
+        leftTrafficItem.physicsBody?.affectedByGravity = false
         addChild(leftTrafficItem)
         
     }
@@ -234,8 +264,18 @@ class GameScene: SKScene {
             rightTrafficItem.position.x = 280
         }
         rightTrafficItem.position.y = 700
+        rightTrafficItem.physicsBody = SKPhysicsBody(circleOfRadius: rightTrafficItem.size.height / 2)
+        rightTrafficItem.physicsBody?.categoryBitMask = ColliderType.ITEM_COLLIDER_1
+        rightTrafficItem.physicsBody?.collisionBitMask = 0
+        rightTrafficItem.physicsBody?.affectedByGravity = false
         addChild(rightTrafficItem)
         
+    }
+    
+    func afterCollision() {
+        var menuScene = SKScene(fileNamed: "GameMenu")
+        menuScene?.scaleMode = .aspectFit
+        view?.presentScene(menuScene!, transition: SKTransition.doorsCloseHorizontal(withDuration: TimeInterval(2)))
     }
     
     

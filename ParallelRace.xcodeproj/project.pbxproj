@@ -16,6 +16,8 @@
 		6E2EF159211C432600623EAA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6E2EF158211C432600623EAA /* Assets.xcassets */; };
 		6E2EF15C211C432600623EAA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6E2EF15A211C432600623EAA /* LaunchScreen.storyboard */; };
 		6E2EF164211CD3B600623EAA /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2EF163211CD3B600623EAA /* Helper.swift */; };
+		6EF38E89211EEC3900216F8F /* GameMenu.sks in Resources */ = {isa = PBXBuildFile; fileRef = 6EF38E88211EEC3900216F8F /* GameMenu.sks */; };
+		6EF38E8B211EEC6B00216F8F /* GameMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF38E8A211EEC6B00216F8F /* GameMenu.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +32,8 @@
 		6E2EF15B211C432600623EAA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		6E2EF15D211C432600623EAA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6E2EF163211CD3B600623EAA /* Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
+		6EF38E88211EEC3900216F8F /* GameMenu.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameMenu.sks; sourceTree = "<group>"; };
+		6EF38E8A211EEC6B00216F8F /* GameMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameMenu.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,6 +70,8 @@
 				6E2EF14D211C432500623EAA /* GameScene.sks */,
 				6E2EF14F211C432500623EAA /* Actions.sks */,
 				6E2EF151211C432500623EAA /* GameScene.swift */,
+				6EF38E88211EEC3900216F8F /* GameMenu.sks */,
+				6EF38E8A211EEC6B00216F8F /* GameMenu.swift */,
 				6E2EF163211CD3B600623EAA /* Helper.swift */,
 				6E2EF153211C432500623EAA /* GameViewController.swift */,
 				6E2EF155211C432500623EAA /* Main.storyboard */,
@@ -138,6 +144,7 @@
 				6E2EF14E211C432500623EAA /* GameScene.sks in Resources */,
 				6E2EF159211C432600623EAA /* Assets.xcassets in Resources */,
 				6E2EF15C211C432600623EAA /* LaunchScreen.storyboard in Resources */,
+				6EF38E89211EEC3900216F8F /* GameMenu.sks in Resources */,
 				6E2EF150211C432500623EAA /* Actions.sks in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -150,6 +157,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6E2EF152211C432500623EAA /* GameScene.swift in Sources */,
+				6EF38E8B211EEC6B00216F8F /* GameMenu.swift in Sources */,
 				6E2EF154211C432500623EAA /* GameViewController.swift in Sources */,
 				6E2EF14C211C432500623EAA /* AppDelegate.swift in Sources */,
 				6E2EF164211CD3B600623EAA /* Helper.swift in Sources */,
