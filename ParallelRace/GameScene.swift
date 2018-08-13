@@ -28,6 +28,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     let rightCarMinimumX: CGFloat = 100
     let rightCarMaximumX : CGFloat = 275
     
+    var countDown = 1
+    var stopEverything = true
+    
     override func didMove(to view: SKView) {
         self.anchorPoint = CGPoint(x: 0.5, y: 0.5)
         setUp()
@@ -36,6 +39,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         print(UIScreen.main.bounds.width)
         print(UIScreen.main.bounds.height)
         Timer.scheduledTimer(timeInterval: TimeInterval(0.1), target: self, selector: #selector(createRoadStrip), userInfo: nil, repeats: true)
+        Timer.scheduledTimer(timeInterval: TimeInterval(1), target: self, selector: #selector(startCountdown), userInfo: nil, repeats: true)
         Timer.scheduledTimer(timeInterval: TimeInterval(Helper().randomBetweenTwoNumbers(firstNumber: 0, secondNumber: 1.8)), target: self, selector: #selector(leftTraffic), userInfo: nil, repeats: true)
         Timer.scheduledTimer(timeInterval: TimeInterval(Helper().randomBetweenTwoNumbers(firstNumber: 0, secondNumber: 1.8)), target: self, selector: #selector(rightTraffic), userInfo: nil, repeats: true)
         
@@ -104,6 +108,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         rightCar.physicsBody?.categoryBitMask = ColliderType.CAR_COLLIDER
         rightCar.physicsBody?.contactTestBitMask = ColliderType.ITEM_COLLIDER_1
         rightCar.physicsBody?.collisionBitMask = 0
+        
+        let scoreBackground = SKShapeNode(rect: CGRect(x: -self.size.width / 2 + 70, y: self.size.height / 2 - 130, width: 100, height: 80), cornerRadius: 20)
+        scoreBackground.zPosition = 4
+        scoreBackground.fillColor = SKColor.black.withAlphaComponent(0.3)
+        scoreBackground.strokeColor = SKColor.black.withAlphaComponent(0.3)
+        addChild(scoreBackground)
     }
     
     @objc func createRoadStrip() {
@@ -195,80 +205,85 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     @objc func leftTraffic() {
+        if !stopEverything {
+            let leftTrafficItem: SKSpriteNode!
+            let randomNumber = Helper().randomBetweenTwoNumbers(firstNumber: 1, secondNumber: 8)
+            switch Int(randomNumber) {
+            case 1...4:
+                leftTrafficItem = SKSpriteNode(imageNamed: "orangeCar")
+                leftTrafficItem.name = "orangeCar"
+                break
+            case 5...8:
+                leftTrafficItem = SKSpriteNode(imageNamed: "greenCar")
+                leftTrafficItem.name = "greenCar"
+                break
+            default:
+                leftTrafficItem = SKSpriteNode(imageNamed: "orangeCar")
+                leftTrafficItem.name = "orangeCar"
+            }
+            leftTrafficItem.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+            leftTrafficItem.zPosition = 5
+            let randomNumber2 = Helper().randomBetweenTwoNumbers(firstNumber: 1, secondNumber: 10)
+            switch randomNumber2 {
+            case 1...4:
+                leftTrafficItem.position.x = -280
+                break
+            case 5...10:
+                leftTrafficItem.position.x = -100
+                break
+            default:
+                leftTrafficItem.position.x = -280
+            }
+            leftTrafficItem.position.y = 700
+            leftTrafficItem.physicsBody = SKPhysicsBody(circleOfRadius: leftTrafficItem.size.height / 2)
+            leftTrafficItem.physicsBody?.categoryBitMask = ColliderType.ITEM_COLLIDER
+            leftTrafficItem.physicsBody?.collisionBitMask = 0
+            leftTrafficItem.physicsBody?.affectedByGravity = false
+            addChild(leftTrafficItem)
+            
+        }
         
-        let leftTrafficItem: SKSpriteNode!
-        let randomNumber = Helper().randomBetweenTwoNumbers(firstNumber: 1, secondNumber: 8)
-        switch Int(randomNumber) {
-        case 1...4:
-            leftTrafficItem = SKSpriteNode(imageNamed: "orangeCar")
-            leftTrafficItem.name = "orangeCar"
-            break
-        case 5...8:
-            leftTrafficItem = SKSpriteNode(imageNamed: "greenCar")
-            leftTrafficItem.name = "greenCar"
-            break
-        default:
-            leftTrafficItem = SKSpriteNode(imageNamed: "orangeCar")
-            leftTrafficItem.name = "orangeCar"
-        }
-        leftTrafficItem.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        leftTrafficItem.zPosition = 5
-        let randomNumber2 = Helper().randomBetweenTwoNumbers(firstNumber: 1, secondNumber: 10)
-        switch randomNumber2 {
-        case 1...4:
-            leftTrafficItem.position.x = -280
-            break
-        case 5...10:
-            leftTrafficItem.position.x = -100
-            break
-        default:
-            leftTrafficItem.position.x = -280
-        }
-        leftTrafficItem.position.y = 700
-        leftTrafficItem.physicsBody = SKPhysicsBody(circleOfRadius: leftTrafficItem.size.height / 2)
-        leftTrafficItem.physicsBody?.categoryBitMask = ColliderType.ITEM_COLLIDER
-        leftTrafficItem.physicsBody?.collisionBitMask = 0
-        leftTrafficItem.physicsBody?.affectedByGravity = false
-        addChild(leftTrafficItem)
         
     }
     
     @objc func rightTraffic() {
-        
-        let rightTrafficItem: SKSpriteNode!
-        let randomNumber = Helper().randomBetweenTwoNumbers(firstNumber: 1, secondNumber: 8)
-        switch Int(randomNumber) {
-        case 1...4:
-            rightTrafficItem = SKSpriteNode(imageNamed: "orangeCar")
-            rightTrafficItem.name = "orangeCar"
-            break
-        case 5...8:
-            rightTrafficItem = SKSpriteNode(imageNamed: "greenCar")
-            rightTrafficItem.name = "greenCar"
-            break
-        default:
-            rightTrafficItem = SKSpriteNode(imageNamed: "orangeCar")
-            rightTrafficItem.name = "orangeCar"
+        if !stopEverything {
+            let rightTrafficItem: SKSpriteNode!
+            let randomNumber = Helper().randomBetweenTwoNumbers(firstNumber: 1, secondNumber: 8)
+            switch Int(randomNumber) {
+            case 1...4:
+                rightTrafficItem = SKSpriteNode(imageNamed: "orangeCar")
+                rightTrafficItem.name = "orangeCar"
+                break
+            case 5...8:
+                rightTrafficItem = SKSpriteNode(imageNamed: "greenCar")
+                rightTrafficItem.name = "greenCar"
+                break
+            default:
+                rightTrafficItem = SKSpriteNode(imageNamed: "orangeCar")
+                rightTrafficItem.name = "orangeCar"
+            }
+            rightTrafficItem.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+            rightTrafficItem.zPosition = 5
+            let randomNumber2 = Helper().randomBetweenTwoNumbers(firstNumber: 1, secondNumber: 10)
+            switch randomNumber2 {
+            case 1...4:
+                rightTrafficItem.position.x = 280
+                break
+            case 5...10:
+                rightTrafficItem.position.x = 100
+                break
+            default:
+                rightTrafficItem.position.x = 280
+            }
+            rightTrafficItem.position.y = 700
+            rightTrafficItem.physicsBody = SKPhysicsBody(circleOfRadius: rightTrafficItem.size.height / 2)
+            rightTrafficItem.physicsBody?.categoryBitMask = ColliderType.ITEM_COLLIDER_1
+            rightTrafficItem.physicsBody?.collisionBitMask = 0
+            rightTrafficItem.physicsBody?.affectedByGravity = false
+            addChild(rightTrafficItem)
+            
         }
-        rightTrafficItem.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        rightTrafficItem.zPosition = 5
-        let randomNumber2 = Helper().randomBetweenTwoNumbers(firstNumber: 1, secondNumber: 10)
-        switch randomNumber2 {
-        case 1...4:
-            rightTrafficItem.position.x = 280
-            break
-        case 5...10:
-            rightTrafficItem.position.x = 100
-            break
-        default:
-            rightTrafficItem.position.x = 280
-        }
-        rightTrafficItem.position.y = 700
-        rightTrafficItem.physicsBody = SKPhysicsBody(circleOfRadius: rightTrafficItem.size.height / 2)
-        rightTrafficItem.physicsBody?.categoryBitMask = ColliderType.ITEM_COLLIDER_1
-        rightTrafficItem.physicsBody?.collisionBitMask = 0
-        rightTrafficItem.physicsBody?.affectedByGravity = false
-        addChild(rightTrafficItem)
         
     }
     
@@ -276,6 +291,34 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         var menuScene = SKScene(fileNamed: "GameMenu")
         menuScene?.scaleMode = .aspectFit
         view?.presentScene(menuScene!, transition: SKTransition.doorsCloseHorizontal(withDuration: TimeInterval(2)))
+    }
+    
+    @objc func startCountdown() {
+        
+        if countDown > 0 {
+            if countDown < 4 {
+                let countdownLabel = SKLabelNode()
+                countdownLabel.fontName = "AvenirNext-Bold"
+                countdownLabel.fontColor = SKColor.white
+                countdownLabel.fontSize = 300
+                countdownLabel.text = String(countDown)
+                countdownLabel.position = CGPoint(x: 0, y: 0)
+                countdownLabel.zPosition = 20
+                countdownLabel.name = "cLabel"
+                countdownLabel.horizontalAlignmentMode = .center
+                addChild(countdownLabel)
+                
+                let deadTime = DispatchTime.now() + 0.5
+                DispatchQueue.main.asyncAfter(deadline: deadTime) {
+                    countdownLabel.removeFromParent()
+                }
+            }
+            countDown += 1
+            if countDown == 4 {
+                self.stopEverything = false
+            }
+        }
+        
     }
     
     
