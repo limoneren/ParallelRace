@@ -21,6 +21,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var leftCarAtRight = false
     var rightCarAtLeft = false
     var centerPoint: CGFloat!
+    var score = 0
     
     let leftCarMinimumX : CGFloat = -275
     let leftCarMaximumX : CGFloat = -100
@@ -30,6 +31,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var countDown = 1
     var stopEverything = true
+    var scoreText = SKLabelNode()
+    
+    var gameSettings = Settings.sharedInstance
     
     override func didMove(to view: SKView) {
         self.anchorPoint = CGPoint(x: 0.5, y: 0.5)
@@ -40,10 +44,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         print(UIScreen.main.bounds.height)
         Timer.scheduledTimer(timeInterval: TimeInterval(0.1), target: self, selector: #selector(createRoadStrip), userInfo: nil, repeats: true)
         Timer.scheduledTimer(timeInterval: TimeInterval(1), target: self, selector: #selector(startCountdown), userInfo: nil, repeats: true)
-        Timer.scheduledTimer(timeInterval: TimeInterval(Helper().randomBetweenTwoNumbers(firstNumber: 0, secondNumber: 1.8)), target: self, selector: #selector(leftTraffic), userInfo: nil, repeats: true)
-        Timer.scheduledTimer(timeInterval: TimeInterval(Helper().randomBetweenTwoNumbers(firstNumber: 0, secondNumber: 1.8)), target: self, selector: #selector(rightTraffic), userInfo: nil, repeats: true)
+        Timer.scheduledTimer(timeInterval: TimeInterval(Helper().randomBetweenTwoNumbers(firstNumber: 0.8, secondNumber: 1.8)), target: self, selector: #selector(leftTraffic), userInfo: nil, repeats: true)
+        Timer.scheduledTimer(timeInterval: TimeInterval(Helper().randomBetweenTwoNumbers(firstNumber: 0.8, secondNumber: 1.8)), target: self, selector: #selector(rightTraffic), userInfo: nil, repeats: true)
         
-        Timer.scheduledTimer(timeInterval: TimeInterval(2), target: self, selector: #selector(removeItems), userInfo: nil, repeats: true)
+        Timer.scheduledTimer(timeInterval: TimeInterval(0.5), target: self, selector: #selector(removeItems), userInfo: nil, repeats: true)
+        
+        let deadTime = DispatchTime.now() + 1
+        DispatchQueue.main.asyncAfter(deadline: deadTime) {
+            Timer.scheduledTimer(timeInterval: TimeInterval(1), target: self, selector: #selector(self.increaseScore), userInfo: nil, repeats: true)
+        }
     }
     
     override func update(_ currentTime: TimeInterval) {
@@ -114,6 +123,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         scoreBackground.fillColor = SKColor.black.withAlphaComponent(0.3)
         scoreBackground.strokeColor = SKColor.black.withAlphaComponent(0.3)
         addChild(scoreBackground)
+        
+        scoreText.name = "score"
+        scoreText.fontName = "AvenirNext-Bold"
+        scoreText.text = "0"
+        scoreText.fontColor = SKColor.white
+        scoreText.position = CGPoint(x: -self.size.width / 2 + 140, y: self.size.height / 2 - 110)
+        scoreText.fontSize = 50
+        scoreText.zPosition = 3
+        addChild(scoreText)
     }
     
     @objc func createRoadStrip() {
@@ -156,13 +174,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         enumerateChildNodes(withName: "orangeCar") { (leftCar, stop) in
             let car = leftCar as! SKSpriteNode
             
-            car.position.y -= 30
+            car.position.y -= 15
         }
         
         enumerateChildNodes(withName: "greenCar") { (rightCar, stop) in
             let car = rightCar as! SKSpriteNode
             
-            car.position.y -= 30
+            car.position.y -= 15
         }
         
     }
@@ -288,9 +306,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func afterCollision() {
+        if gameSettings.highScore < score {
+            gameSettings.highScore = score
+        }
         var menuScene = SKScene(fileNamed: "GameMenu")
         menuScene?.scaleMode = .aspectFit
-        view?.presentScene(menuScene!, transition: SKTransition.doorsCloseHorizontal(withDuration: TimeInterval(2)))
+        view?.presentScene(menuScene!, transition: SKTransition.doorsCloseHorizontal(withDuration: TimeInterval(1)))
     }
     
     @objc func startCountdown() {
@@ -319,6 +340,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
         }
         
+    }
+    
+    @objc func increaseScore() {
+        if !stopEverything {
+            score += 1
+            scoreText.text = String(score)
+        }
     }
     
     
